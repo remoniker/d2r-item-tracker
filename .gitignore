@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Output
+output/
+*.json
+!example_output.json
+
+# EasyOCR model cache
+.EasyOCR/
+
+# Frames (temp extraction)
+frames/
+
+# PyInstaller
+dist/
+build/
+*.spec
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Video
+*.mp4
+*.avi
+*.mkv
+*.mov
