@@ -51,12 +51,18 @@ def process_video(video_path: str, output_path: str, fps: float = 2.0, keep_fram
             json.dump(results, f, ensure_ascii=False, indent=2)
         print(f"Written to {output_path}")
 
-        # Cleaned output
-        cleaned_path = str(pathlib.Path(output_path).with_stem(pathlib.Path(output_path).stem + "_cleaned"))
+        # Cleaned output as plain text — summary list then full details
+        txt_path = str(pathlib.Path(output_path).with_suffix(".txt"))
         cleaned_results = [clean_and_structure(r["lines"]) for r in results]
-        with open(cleaned_path, "w", encoding="utf-8") as f:
-            json.dump(cleaned_results, f, ensure_ascii=False, indent=2)
-        print(f"Cleaned written to {cleaned_path}")
+        with open(txt_path, "w", encoding="utf-8") as f:
+            f.write("Items List:\n")
+            for item in cleaned_results:
+                f.write(f"- {item['item_title']}\n")
+            f.write("\n\n")
+            for item in cleaned_results:
+                lines = [item["item_title"]] + item["item_details"]
+                f.write("\n".join(lines) + "\n\n")
+        print(f"Cleaned written to {txt_path}")
 
     finally:
         if not keep_frames:

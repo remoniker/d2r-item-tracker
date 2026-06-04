@@ -76,13 +76,14 @@ def clean_line(line: str) -> str:
     # 3. Replace digit-zero directly adjacent to a letter → letter O
     #    "T0" → "TO",  "0F" → "OF",  but "30%" stays "30%"
     line = re.sub(r'(?<=[A-Z])0|0(?=[A-Z])', 'O', line)
-    # 4. Replace digit-zero separated by a single space from a letter → letter O
+    # 4. Collapse spurious spaces inserted within digit sequences
+    #    Must run before step 5 so "8 0 TO" → "80 TO" before the 0 is converted
+    for _ in range(4):
+        line = re.sub(r'(\d) (\d)', r'\1\2', line)
+    # 5. Replace digit-zero separated by a single space from a letter → letter O
     #    "0 F" → "O F" (fragment merge in step 6 then joins to "OF")
     #    Guard: don't touch zero that follows another digit ("20 FASTER" safe)
     line = re.sub(r'(?<![0-9])0 (?=[A-Z])', 'O ', line)
-    # 5. Collapse spurious spaces inserted within digit sequences
-    for _ in range(4):
-        line = re.sub(r'(\d) (\d)', r'\1\2', line)
     # 6. Merge consecutive word-fragments that together form a vocab word
     line = _merge_fragments(line)
     # 7. Fuzzy per-word correction against D2R vocabulary
